@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A22D5F3A-C7E6-44E3-B8B1-3229F2495DEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ramos-kyoto-hr.Domain", "src\ramos-kyoto-hr.Domain\ramos-kyoto-hr.Domain.csproj", "{30284D58-9EDD-44AC-B10F-E9301BF9FE59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ramos-kyoto-hr.Application", "src\ramos-kyoto-hr.Application\ramos-kyoto-hr.Application.csproj", "{34C927BA-D8D3-4A76-8D17-00168578AB78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ramos-kyoto-hr.Infrastructure", "src\ramos-kyoto-hr.Infrastructure\ramos-kyoto-hr.Infrastructure.csproj", "{AEECAE23-4011-4D46-8C3C-C8B39E661B69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ramos-kyoto-hr.WebApi", "src\ramos-kyoto-hr.WebApi\ramos-kyoto-hr.WebApi.csproj", "{E70C15E9-136D-44E2-9D86-B62E9422B5AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{50B0C838-36AF-46B1-9C98-20AA87CB154A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ramos-kyoto-hr.Tests", "tests\ramos-kyoto-hr.Tests\ramos-kyoto-hr.Tests.csproj", "{A8D3B3D5-92F7-46A9-B3C7-D1BDEBAE10F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{30284D58-9EDD-44AC-B10F-E9301BF9FE59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30284D58-9EDD-44AC-B10F-E9301BF9FE59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30284D58-9EDD-44AC-B10F-E9301BF9FE59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30284D58-9EDD-44AC-B10F-E9301BF9FE59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34C927BA-D8D3-4A76-8D17-00168578AB78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34C927BA-D8D3-4A76-8D17-00168578AB78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34C927BA-D8D3-4A76-8D17-00168578AB78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34C927BA-D8D3-4A76-8D17-00168578AB78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEECAE23-4011-4D46-8C3C-C8B39E661B69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEECAE23-4011-4D46-8C3C-C8B39E661B69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEECAE23-4011-4D46-8C3C-C8B39E661B69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEECAE23-4011-4D46-8C3C-C8B39E661B69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E70C15E9-136D-44E2-9D86-B62E9422B5AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E70C15E9-136D-44E2-9D86-B62E9422B5AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E70C15E9-136D-44E2-9D86-B62E9422B5AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E70C15E9-136D-44E2-9D86-B62E9422B5AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8D3B3D5-92F7-46A9-B3C7-D1BDEBAE10F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8D3B3D5-92F7-46A9-B3C7-D1BDEBAE10F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8D3B3D5-92F7-46A9-B3C7-D1BDEBAE10F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8D3B3D5-92F7-46A9-B3C7-D1BDEBAE10F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{30284D58-9EDD-44AC-B10F-E9301BF9FE59} = {A22D5F3A-C7E6-44E3-B8B1-3229F2495DEF}
+		{34C927BA-D8D3-4A76-8D17-00168578AB78} = {A22D5F3A-C7E6-44E3-B8B1-3229F2495DEF}
+		{AEECAE23-4011-4D46-8C3C-C8B39E661B69} = {A22D5F3A-C7E6-44E3-B8B1-3229F2495DEF}
+		{E70C15E9-136D-44E2-9D86-B62E9422B5AE} = {A22D5F3A-C7E6-44E3-B8B1-3229F2495DEF}
+		{A8D3B3D5-92F7-46A9-B3C7-D1BDEBAE10F6} = {50B0C838-36AF-46B1-9C98-20AA87CB154A}
+	EndGlobalSection
+EndGlobal
