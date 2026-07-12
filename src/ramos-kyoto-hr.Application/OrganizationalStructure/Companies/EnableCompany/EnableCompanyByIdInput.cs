@@ -1,0 +1,3 @@
+namespace ramos_kyoto_hr.Application.OrganizationalStructure.Companies.EnableCompany;
+
+public record EnableCompanyByIdInput(Guid CompanyId);

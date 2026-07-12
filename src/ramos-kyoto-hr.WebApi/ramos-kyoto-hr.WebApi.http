@@ -1,6 +1,46 @@
-@ramos_kyoto_hr.WebApi_HostAddress = http://localhost:5062
+@hostAddress = http://localhost:5062
 
-GET {{ramos_kyoto_hr.WebApi_HostAddress}}/weatherforecast/
+# Companies Controller - Organization Structure
+
+### Register Company
+POST {{hostAddress}}/api/organization-structure/companies
+Content-Type: application/json
+
+{
+  "cnpj": "12.345.678/0001-90",
+  "razaoSocial": "Empresa Exemplo Ltda"
+}
+
+###
+
+### Update Company Name
+PUT {{hostAddress}}/api/organization-structure/companies/{{companyId}}/name
+Content-Type: application/json
+
+{
+  "newName": "Nova Razão Social Ltda"
+}
+
+###
+
+### Enable Company
+PUT {{hostAddress}}/api/organization-structure/companies/{{companyId}}/enable
+
+###
+
+### Disable Company
+PUT {{hostAddress}}/api/organization-structure/companies/{{companyId}}/disable
+
+###
+
+### Get Company By Id
+GET {{hostAddress}}/api/organization-structure/companies/{{companyId}}/id
+Accept: application/json
+
+###
+
+### Get Company By CNPJ
+GET {{hostAddress}}/api/organization-structure/companies/12.345.678/0001-90/cnpj
 Accept: application/json
 
 ###

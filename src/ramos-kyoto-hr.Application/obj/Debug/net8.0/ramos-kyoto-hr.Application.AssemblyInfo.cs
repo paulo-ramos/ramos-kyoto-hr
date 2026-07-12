@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ramos-kyoto-hr.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+981578b1f9046de322793482e5ed2aa2a93b7568")]
 [assembly: System.Reflection.AssemblyProductAttribute("ramos-kyoto-hr.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ramos-kyoto-hr.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

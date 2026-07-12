@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "/Lc1/+iuKNg=",
+  "dgSpecHash": "attBzXe3oKE=",
   "success": true,
   "projectFilePath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.WebApi/ramos-kyoto-hr.WebApi.csproj",
   "expectedPackageFiles": [
     "/home/paulo/.nuget/packages/microsoft.aspnetcore.openapi/8.0.28/microsoft.aspnetcore.openapi.8.0.28.nupkg.sha512",
     "/home/paulo/.nuget/packages/microsoft.extensions.apidescription.server/8.0.0/microsoft.extensions.apidescription.server.8.0.0.nupkg.sha512",
+    "/home/paulo/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.9/microsoft.extensions.dependencyinjection.abstractions.10.0.9.nupkg.sha512",
     "/home/paulo/.nuget/packages/microsoft.openapi/2.7.5/microsoft.openapi.2.7.5.nupkg.sha512",
     "/home/paulo/.nuget/packages/swashbuckle.aspnetcore/10.2.3/swashbuckle.aspnetcore.10.2.3.nupkg.sha512",
     "/home/paulo/.nuget/packages/swashbuckle.aspnetcore.swagger/10.2.3/swashbuckle.aspnetcore.swagger.10.2.3.nupkg.sha512",

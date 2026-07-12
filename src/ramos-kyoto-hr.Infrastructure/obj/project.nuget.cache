@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "O7MTIUG/6wo=",
+  "dgSpecHash": "1zBT58lWUMo=",
   "success": true,
   "projectFilePath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/paulo/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.9/microsoft.extensions.dependencyinjection.abstractions.10.0.9.nupkg.sha512"
+  ],
   "logs": []
 }
