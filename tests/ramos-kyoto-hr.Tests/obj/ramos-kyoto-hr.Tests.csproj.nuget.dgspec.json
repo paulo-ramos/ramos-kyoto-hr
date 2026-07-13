@@ -4,6 +4,69 @@
     "/home/paulo/Projects/ramos-kyoto-hr/tests/ramos-kyoto-hr.Tests/ramos-kyoto-hr.Tests.csproj": {}
   },
   "projects": {
+    "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Application/ramos-kyoto-hr.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Application/ramos-kyoto-hr.Application.csproj",
+        "projectName": "ramos-kyoto-hr.Application",
+        "projectPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Application/ramos-kyoto-hr.Application.csproj",
+        "packagesPath": "/home/paulo/.nuget/packages/",
+        "outputPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/paulo/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj": {
+                "projectPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[10.0.9, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.128/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -57,6 +120,69 @@
         }
       }
     },
+    "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj",
+        "projectName": "ramos-kyoto-hr.Infrastructure",
+        "projectPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj",
+        "packagesPath": "/home/paulo/.nuget/packages/",
+        "outputPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/paulo/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Application/ramos-kyoto-hr.Application.csproj": {
+                "projectPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Application/ramos-kyoto-hr.Application.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[10.0.9, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.128/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "/home/paulo/Projects/ramos-kyoto-hr/tests/ramos-kyoto-hr.Tests/ramos-kyoto-hr.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -81,6 +207,9 @@
             "projectReferences": {
               "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj": {
                 "projectPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj"
+              },
+              "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj": {
+                "projectPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj"
               }
             }
           }
@@ -95,6 +224,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[8.10.0, )"
+            },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[18.7.0, )"

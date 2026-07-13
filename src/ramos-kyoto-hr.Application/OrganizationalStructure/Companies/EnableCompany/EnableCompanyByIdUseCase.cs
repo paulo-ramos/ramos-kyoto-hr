@@ -1,3 +1,4 @@
+using ramos_kyoto_hr.Domain.Exceptions;
 using ramos_kyoto_hr.Domain.Repositories;
 
 namespace ramos_kyoto_hr.Application.OrganizationalStructure.Companies.EnableCompany;
@@ -20,12 +21,15 @@ public class EnableCompanyByIdUseCase : IEnableCompanyByIdUseCase
         
         if (company == null)
         {
-            throw new KeyNotFoundException($"Empresa com o ID {companyInput.CompanyId} não foi encontrada.");
+            throw new EntityNotFoundException("Company", companyInput.CompanyId);
         }
+        
+        var hasChanged = company.Enable(companyInput.EffectiveStartDate);
 
-        company.Enable(companyInput.EffectiveStartDate);
-
-        await _companyRepository.UpdateAsync(company);
+        if (hasChanged)
+        {
+            await _companyRepository.UpdateAsync(company);
+        }
         
         return new EnableCompanyByIdResult(
             company.Id,

@@ -1,3 +1,4 @@
+using ramos_kyoto_hr.Domain.Exceptions;
 using ramos_kyoto_hr.Domain.ObjectValue;
 using ramos_kyoto_hr.Domain.Repositories;
 
@@ -23,7 +24,7 @@ public class GetCompanyByCnpjUseCase : IGetCompanyByCnpjUseCase
 
         if (company == null)
         {
-            throw new KeyNotFoundException($"Company with ID {cnpj} was not found.");
+            throw new EntityNotFoundException("Company", cnpj.Valor);
         }
 
         return new GetCompanyByCnpjResult(

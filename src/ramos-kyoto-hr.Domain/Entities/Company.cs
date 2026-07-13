@@ -17,34 +17,55 @@ public sealed class Company : Entity
         SetId();
     }
     
-    public void UpdateRazaoSocial(DateOnly effectiveStartDate,RazaoSocial novaRazaoSocial)
+    public bool UpdateRazaoSocial(DateOnly effectiveStartDate,RazaoSocial novaRazaoSocial)
     {
         if (novaRazaoSocial == null)
             throw new ArgumentNullException(nameof(novaRazaoSocial));
+
+        if (novaRazaoSocial == this.RazaoSocial)
+        {
+            return false;
+        }
 
         Update(() =>
         {
             EffectiveStartDate = effectiveStartDate;
             RazaoSocial = novaRazaoSocial;
         });
+
+        return true;
     }
     
-    public void Enable(DateOnly effectiveStartDate)
+    public bool Enable(DateOnly effectiveStartDate)
     {
+        if (IsStatusActive())
+        {
+            return false;
+        }
+
         Update(() =>
         {
             EffectiveStartDate = effectiveStartDate;
             IsActive = true;
         });
+        
+        return true;
     }
     
-    public void Disable(DateOnly effectiveStartDate)
+    public bool Disable(DateOnly effectiveStartDate)
     {
+        if (IsStatusDeactive())
+        {
+            return false;
+        }
+
         Update(() =>
         {
             EffectiveStartDate = effectiveStartDate;
             IsActive = false;
         });
+        
+        return true;
     }
 
     private void SetId()
@@ -55,7 +76,6 @@ public sealed class Company : Entity
         });
     }
     
-    // Hook 1: Executado ANTES da alteração (antes de modificar RazaoSocial)
     protected override void OnBeforeUpdate()
     {
         Console.WriteLine($"[BEFORE] Empresa {Id} está sendo atualizada...");
@@ -63,12 +83,10 @@ public sealed class Company : Entity
         Console.WriteLine($"[BEFORE] UpdatedAt atual: {UpdatedAt?.ToString() ?? "null"}");
     }
 
-    // Hook 2: Executado APÓS a alteração e após UpdatedAt ser atualizado
     protected override void OnAfterUpdate()
     {
         Console.WriteLine($"[AFTER] UpdatedAt agora é: {UpdatedAt}");
         
-        // Adiciona ao histórico de auditoria
         var registro = $"{UpdatedAt:yyyy-MM-dd HH:mm:ss} - Razão Social alterada para: {RazaoSocial.Valor}";
         Console.WriteLine(registro);
         

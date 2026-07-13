@@ -25,22 +25,23 @@ Content-Type: application/json
 
 ### Enable Company
 PUT {{hostAddress}}/api/organization-structure/companies/{{companyId}}/enable
-
+Accept: application/json
 ###
 
 ### Disable Company
 PUT {{hostAddress}}/api/organization-structure/companies/{{companyId}}/disable
-
+Accept: application/json
 ###
 
 ### Get Company By Id
-GET {{hostAddress}}/api/organization-structure/companies/{{companyId}}/id
+GET {{hostAddress}}/api/organization-structure/companies/by-id/{{companyId}}
 Accept: application/json
 
 ###
 
 ### Get Company By CNPJ
-GET {{hostAddress}}/api/organization-structure/companies/12345678000190/cnpj
+# CNPJ deve ser informado SEM máscara (apenas dígitos)
+GET {{hostAddress}}/api/organization-structure/companies/by-cnpj/12345678000190
 Accept: application/json
 
 ###

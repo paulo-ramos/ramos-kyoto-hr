@@ -1,3 +1,4 @@
+using ramos_kyoto_hr.Domain.Exceptions;
 using ramos_kyoto_hr.Domain.Repositories;
 
 namespace ramos_kyoto_hr.Application.OrganizationalStructure.Companies.GetCompanyById;
@@ -20,7 +21,7 @@ public class GetCompanyByIdUseCase : IGetCompanyByIdUseCase
 
         if (company == null)
         {
-            throw new KeyNotFoundException($"Company with ID {companyInput.CompanyId} was not found.");
+            throw new EntityNotFoundException("Company", companyInput.CompanyId);
         }
 
         return new GetCompanyByIdResult(

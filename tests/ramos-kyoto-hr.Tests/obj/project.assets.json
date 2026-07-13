@@ -8,6 +8,19 @@
           "build/net8.0/coverlet.collector.targets": {}
         }
       },
+      "FluentAssertions/8.10.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/FluentAssertions.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/FluentAssertions.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
       "Microsoft.ApplicationInsights/2.23.0": {
         "type": "package",
         "dependencies": {
@@ -48,6 +61,22 @@
         "build": {
           "build/netstandard2.0/Microsoft.CodeCoverage.props": {},
           "build/netstandard2.0/Microsoft.CodeCoverage.targets": {}
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.9": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/net8.0/_._": {}
         }
       },
       "Microsoft.NET.Test.Sdk/18.7.0": {
@@ -804,6 +833,20 @@
           }
         }
       },
+      "ramos-kyoto-hr.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.9",
+          "ramos-kyoto-hr.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ramos-kyoto-hr.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ramos-kyoto-hr.Application.dll": {}
+        }
+      },
       "ramos-kyoto-hr.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
@@ -812,6 +855,20 @@
         },
         "runtime": {
           "bin/placeholder/ramos-kyoto-hr.Domain.dll": {}
+        }
+      },
+      "ramos-kyoto-hr.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.9",
+          "ramos-kyoto-hr.Application": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ramos-kyoto-hr.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ramos-kyoto-hr.Infrastructure.dll": {}
         }
       }
     }
@@ -983,6 +1040,31 @@
         "coverlet.collector.nuspec"
       ]
     },
+    "FluentAssertions/8.10.0": {
+      "sha512": "yGvv+xp0gHFgGwhQcGoDdKIrhLhPi3zYYWWLLHPMctr+G6PWD7QH8L4wqoa5WRZquPbfSV/cP1MraI7ppAHrWw==",
+      "type": "package",
+      "path": "fluentassertions/8.10.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "FluentAssertions.png",
+        "LICENSE",
+        "fluentassertions.8.10.0.nupkg.sha512",
+        "fluentassertions.nuspec",
+        "lib/net47/FluentAssertions.dll",
+        "lib/net47/FluentAssertions.pdb",
+        "lib/net47/FluentAssertions.xml",
+        "lib/net6.0/FluentAssertions.dll",
+        "lib/net6.0/FluentAssertions.pdb",
+        "lib/net6.0/FluentAssertions.xml",
+        "lib/netstandard2.0/FluentAssertions.dll",
+        "lib/netstandard2.0/FluentAssertions.pdb",
+        "lib/netstandard2.0/FluentAssertions.xml",
+        "lib/netstandard2.1/FluentAssertions.dll",
+        "lib/netstandard2.1/FluentAssertions.pdb",
+        "lib/netstandard2.1/FluentAssertions.xml"
+      ]
+    },
     "Microsoft.ApplicationInsights/2.23.0": {
       "sha512": "nWArUZTdU7iqZLycLKWe0TDms48KKGE6pONH2terYNa8REXiqixrMOkf1sk5DHGMaUTqONU2YkS4SAXBhLStgw==",
       "type": "package",
@@ -1106,6 +1188,37 @@
         "lib/net8.0/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
         "microsoft.codecoverage.18.7.0.nupkg.sha512",
         "microsoft.codecoverage.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.9": {
+      "sha512": "g41l/30G3K4B/d/L8kjux0+30e27c8D0FVQ/PFCpbekgfDpj9mnDhieP67EqXWvl1EWNeZh2rpR4F5B/jcDOHA==",
+      "type": "package",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/10.0.9",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net461/Microsoft.Extensions.DependencyInjection.Abstractions.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net8.0/_._",
+        "buildTransitive/netcoreapp2.0/Microsoft.Extensions.DependencyInjection.Abstractions.targets",
+        "lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+        "lib/net462/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "lib/net462/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+        "lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+        "lib/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "lib/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+        "lib/netstandard2.1/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "lib/netstandard2.1/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+        "microsoft.extensions.dependencyinjection.abstractions.10.0.9.nupkg.sha512",
+        "microsoft.extensions.dependencyinjection.abstractions.nuspec",
+        "useSharedDesignerContext.txt"
       ]
     },
     "Microsoft.NET.Test.Sdk/18.7.0": {
@@ -2130,17 +2243,29 @@
         "xunit.v3.runner.inproc.console.nuspec"
       ]
     },
+    "ramos-kyoto-hr.Application/1.0.0": {
+      "type": "project",
+      "path": "../../src/ramos-kyoto-hr.Application/ramos-kyoto-hr.Application.csproj",
+      "msbuildProject": "../../src/ramos-kyoto-hr.Application/ramos-kyoto-hr.Application.csproj"
+    },
     "ramos-kyoto-hr.Domain/1.0.0": {
       "type": "project",
       "path": "../../src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj",
       "msbuildProject": "../../src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj"
+    },
+    "ramos-kyoto-hr.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../../src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj",
+      "msbuildProject": "../../src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "FluentAssertions >= 8.10.0",
       "Microsoft.NET.Test.Sdk >= 18.7.0",
       "coverlet.collector >= 10.0.1",
       "ramos-kyoto-hr.Domain >= 1.0.0",
+      "ramos-kyoto-hr.Infrastructure >= 1.0.0",
       "xunit.runner.visualstudio >= 3.1.5",
       "xunit.v3 >= 3.2.2"
     ]
@@ -2172,6 +2297,9 @@
           "projectReferences": {
             "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj": {
               "projectPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Domain/ramos-kyoto-hr.Domain.csproj"
+            },
+            "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj": {
+              "projectPath": "/home/paulo/Projects/ramos-kyoto-hr/src/ramos-kyoto-hr.Infrastructure/ramos-kyoto-hr.Infrastructure.csproj"
             }
           }
         }
@@ -2186,6 +2314,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "FluentAssertions": {
+            "target": "Package",
+            "version": "[8.10.0, )"
+          },
           "Microsoft.NET.Test.Sdk": {
             "target": "Package",
             "version": "[18.7.0, )"

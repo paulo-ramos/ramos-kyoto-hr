@@ -2,5 +2,5 @@ namespace ramos_kyoto_hr.Application.OrganizationalStructure.Companies.UpdateCom
 
 public interface IUpdateCompanyNameUseCase
 {
-    Task ExecuteAsync(Guid id, UpdateCompanyNameInput companyInput);
+    Task<UpdateCompanyNameResult> ExecuteAsync(Guid id, UpdateCompanyNameInput companyInput);
 }

@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="8.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ramos-kyoto-hr.Domain\ramos-kyoto-hr.Domain.csproj" />
+    <ProjectReference Include="..\..\src\ramos-kyoto-hr.Infrastructure\ramos-kyoto-hr.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 using ramos_kyoto_hr.Domain.Entities;
+using ramos_kyoto_hr.Domain.Exceptions;
 using ramos_kyoto_hr.Domain.ObjectValue;
 using ramos_kyoto_hr.Domain.Repositories;
 
@@ -24,7 +25,7 @@ public class RegisterCompanyUseCase : IRegisterCompanyUseCase
         var existingCompany = await _companyRepository.GetByCnpjAsync(cnpj);
         if (existingCompany != null)
         {
-            throw new InvalidOperationException($"Já existe uma empresa cadastrada com o CNPJ {cnpj}.");
+            throw new DuplicateEntityException("Company", "CNPJ", cnpj.Valor);
         }
 
         var company = new Company(companyInput.EffectiveStartDate, razaoSocial, cnpj);

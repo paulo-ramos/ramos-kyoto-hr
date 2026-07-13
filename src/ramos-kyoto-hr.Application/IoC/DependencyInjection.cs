@@ -3,6 +3,7 @@ using ramos_kyoto_hr.Application.OrganizationalStructure.Companies.DisableCompan
 using ramos_kyoto_hr.Application.OrganizationalStructure.Companies.EnableCompany;
 using ramos_kyoto_hr.Application.OrganizationalStructure.Companies.GetCompanyByCnpj;
 using ramos_kyoto_hr.Application.OrganizationalStructure.Companies.GetCompanyById;
+using ramos_kyoto_hr.Application.OrganizationalStructure.Companies.ListCompanies;
 using ramos_kyoto_hr.Application.OrganizationalStructure.Companies.RegisterCompany;
 using ramos_kyoto_hr.Application.OrganizationalStructure.Companies.UpdateCompanyName;
 
@@ -19,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<IGetCompanyByCnpjUseCase, GetCompanyByCnpjUseCase>();
         services.AddScoped<IEnableCompanyByIdUseCase, EnableCompanyByIdUseCase>();
         services.AddScoped<IDisableCompanyByIdUseCase, DisableCompanyByIdUseCase>();
+        services.AddScoped<IListCompaniesUseCase, ListCompaniesUseCase>();
 
         return services;
     }

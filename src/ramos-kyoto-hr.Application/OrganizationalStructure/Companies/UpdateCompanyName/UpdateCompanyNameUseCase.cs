@@ -1,3 +1,4 @@
+using ramos_kyoto_hr.Domain.Exceptions;
 using ramos_kyoto_hr.Domain.ObjectValue;
 using ramos_kyoto_hr.Domain.Repositories;
 
@@ -12,7 +13,7 @@ public class UpdateCompanyNameUseCase : IUpdateCompanyNameUseCase
         _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
     }
 
-    public async Task ExecuteAsync(Guid id, UpdateCompanyNameInput companyInput)
+    public async Task<UpdateCompanyNameResult> ExecuteAsync(Guid id, UpdateCompanyNameInput companyInput)
     {
         if (companyInput == null)
             throw new ArgumentNullException(nameof(companyInput), "Os dados de entrada são obrigatórios.");
@@ -21,13 +22,28 @@ public class UpdateCompanyNameUseCase : IUpdateCompanyNameUseCase
         
         if (company == null)
         {
-            throw new KeyNotFoundException($"Empresa com o ID {id} não foi encontrada.");
+            throw new EntityNotFoundException("Company", id);
         }
 
         var razaoSocial = RazaoSocial.Create(companyInput.NewName);
         
-        company.UpdateRazaoSocial(companyInput.EffectiveStartDate, razaoSocial);
+        var hasChanged = company.UpdateRazaoSocial(companyInput.EffectiveStartDate, razaoSocial);
+
+        if (hasChanged)
+        {
+            await _companyRepository.UpdateAsync(company);
+        }
 
         await _companyRepository.UpdateAsync(company);
+        
+        return new UpdateCompanyNameResult(
+            company.Id,
+            company.EffectiveStartDate,
+            company.Cnpj,
+            company.RazaoSocial,
+            company.IsActive,
+            company.CreatedAt,
+            company.UpdatedAt
+        );
     }
 }

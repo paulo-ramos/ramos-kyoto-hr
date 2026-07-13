@@ -41,6 +41,16 @@ public abstract class Entity : IEquatable<Entity>
     
     protected virtual void OnBeforeUpdate() { }
     protected virtual void OnAfterUpdate() { }
+
+    public bool IsStatusActive()
+    {
+        return this.IsActive == true;
+    }
+    
+    public bool IsStatusDeactive()
+    {
+        return this.IsActive == false;
+    }
     
     public bool Equals(Entity? other)
     {
