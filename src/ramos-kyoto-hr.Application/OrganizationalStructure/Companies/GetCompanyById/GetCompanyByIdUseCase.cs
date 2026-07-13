@@ -25,6 +25,7 @@ public class GetCompanyByIdUseCase : IGetCompanyByIdUseCase
 
         return new GetCompanyByIdResult(
             company.Id,
+            company.EffectiveStartDate,
             company.Cnpj,
             company.RazaoSocial,
             company.IsActive,

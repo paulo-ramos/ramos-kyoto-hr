@@ -1,5 +1,6 @@
 using ramos_kyoto_hr.Domain.Base;
 using ramos_kyoto_hr.Domain.ObjectValue;
+using ramos_kyoto_hr.Domain.Utils;
 
 namespace ramos_kyoto_hr.Domain.Entities;
 
@@ -8,36 +9,49 @@ public sealed class Company : Entity
     public Cnpj Cnpj { get; private set; }
     public RazaoSocial RazaoSocial { get; private set; }
     
-    public Company(RazaoSocial razaoSocial, Cnpj cnpj)
+    public Company(DateOnly effectiveStartDate, RazaoSocial razaoSocial, Cnpj cnpj):base(effectiveStartDate)
     {
         RazaoSocial = razaoSocial ?? throw new ArgumentNullException(nameof(razaoSocial));
+        EffectiveStartDate = effectiveStartDate != DateOnly.MinValue ? effectiveStartDate: throw new ArgumentNullException(nameof(effectiveStartDate));
         Cnpj = cnpj ?? throw new ArgumentNullException(nameof(cnpj));
+        SetId();
     }
     
-    public void UpdateRazaoSocial(RazaoSocial novaRazaoSocial)
+    public void UpdateRazaoSocial(DateOnly effectiveStartDate,RazaoSocial novaRazaoSocial)
     {
         if (novaRazaoSocial == null)
             throw new ArgumentNullException(nameof(novaRazaoSocial));
 
         Update(() =>
         {
+            EffectiveStartDate = effectiveStartDate;
             RazaoSocial = novaRazaoSocial;
         });
     }
     
-    public void Enable()
+    public void Enable(DateOnly effectiveStartDate)
     {
         Update(() =>
         {
+            EffectiveStartDate = effectiveStartDate;
             IsActive = true;
         });
     }
     
-    public void Disable()
+    public void Disable(DateOnly effectiveStartDate)
     {
         Update(() =>
         {
+            EffectiveStartDate = effectiveStartDate;
             IsActive = false;
+        });
+    }
+
+    private void SetId()
+    {
+        Update(() =>
+        {
+            Id = GuidGenerator.GuidOrganizationalStructure(Cnpj.Valor, EffectiveStartDate);
         });
     }
     

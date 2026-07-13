@@ -1,0 +1,6 @@
+namespace ramos_kyoto_hr.Application.OrganizationalStructure.Companies.DisableCompany;
+
+public record DisableCompanyByIdInput(
+    DateOnly EffectiveStartDate,
+    Guid CompanyId
+);

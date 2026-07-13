@@ -1,6 +1,7 @@
 using System.Text;
 using ramos_kyoto_hr.Domain.Entities;
 using ramos_kyoto_hr.Domain.ObjectValue;
+using ramos_kyoto_hr.Domain.Utils;
 using Xunit;
 
 namespace ramos_kyoto_hr.Tests;
@@ -8,6 +9,7 @@ namespace ramos_kyoto_hr.Tests;
 public class CompanyTests
 {
     private const string CnpjValido = "11.222.333/0001-81"; // CNPJ válido para testes
+    public DateOnly effectiveStartDate =  DateOnly.FromDateTime(DateTime.UtcNow);
     
     #region Testes de Criação
 
@@ -15,11 +17,13 @@ public class CompanyTests
     public void DeveCriarCompanyComDadosValidos()
     {
         // Arrange
+        var effectiveStartDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
+        var id = GuidGenerator.GuidOrganizationalStructure(cnpj, effectiveStartDate);
 
         // Act
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
 
         // Assert
         Assert.NotNull(company);
@@ -27,8 +31,9 @@ public class CompanyTests
         Assert.Equal(razaoSocial, company.RazaoSocial);
         Assert.Equal(cnpj, company.Cnpj);
         Assert.True(company.IsActive);
-        Assert.NotEqual(default(DateTime), company.CreatedAt);
-        Assert.Null(company.UpdatedAt);
+        Assert.NotEqual(default, company.CreatedAt);
+        Assert.NotNull(company.UpdatedAt);
+        Assert.Equal(company.Id, id);
     }
 
     [Fact]
@@ -39,8 +44,8 @@ public class CompanyTests
         var cnpj = Cnpj.Create(CnpjValido);
 
         // Act
-        var company1 = new Company(razaoSocial, cnpj);
-        var company2 = new Company(razaoSocial, cnpj);
+        var company1 = new Company(effectiveStartDate, razaoSocial, cnpj);
+        var company2 = new Company(effectiveStartDate.AddDays(1), razaoSocial, cnpj);
 
         // Assert
         Assert.NotEqual(company1.Id, company2.Id);
@@ -53,7 +58,7 @@ public class CompanyTests
         var cnpj = Cnpj.Create(CnpjValido);
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentNullException>(() => new Company(null!, cnpj));
+        var exception = Assert.Throws<ArgumentNullException>(() => new Company(effectiveStartDate, null!, cnpj));
         Assert.Equal("razaoSocial", exception.ParamName);
     }
 
@@ -64,7 +69,7 @@ public class CompanyTests
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentNullException>(() => new Company(razaoSocial, null!));
+        var exception = Assert.Throws<ArgumentNullException>(() => new Company(effectiveStartDate, razaoSocial, null!));
         Assert.Equal("cnpj", exception.ParamName);
     }
 
@@ -77,7 +82,7 @@ public class CompanyTests
         var antes = DateTime.UtcNow;
 
         // Act
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
         var depois = DateTime.UtcNow;
 
         // Assert
@@ -94,12 +99,12 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
 
         // Act
-        company.UpdateRazaoSocial(novaRazaoSocial);
+        company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
 
         // Assert
         Assert.Equal(novaRazaoSocial, company.RazaoSocial);
@@ -112,15 +117,15 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
-        Assert.Null(company.UpdatedAt);
+        Assert.NotNull(company.UpdatedAt);
         
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
         var antes = DateTime.UtcNow;
 
         // Act
-        company.UpdateRazaoSocial(novaRazaoSocial);
+        company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
         var depois = DateTime.UtcNow;
 
         // Assert
@@ -134,15 +139,15 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentNullException>(() => company.UpdateRazaoSocial(null!));
+        var exception = Assert.Throws<ArgumentNullException>(() => company.UpdateRazaoSocial(effectiveStartDate,null!));
         Assert.Equal("novaRazaoSocial", exception.ParamName);
         
         // Verifica que nada foi alterado
         Assert.Equal(razaoSocialInicial, company.RazaoSocial);
-        Assert.Null(company.UpdatedAt);
+        Assert.NotNull(company.UpdatedAt);
     }
 
     [Fact]
@@ -151,18 +156,18 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var razaoSocial1 = RazaoSocial.Create("Empresa Alterada 1 LTDA");
         var razaoSocial2 = RazaoSocial.Create("Empresa Alterada 2 LTDA");
 
         // Act
-        company.UpdateRazaoSocial(razaoSocial1);
+        company.UpdateRazaoSocial(effectiveStartDate, razaoSocial1);
         var primeiraAtualizacao = company.UpdatedAt;
         
         Thread.Sleep(10); // Pequeno delay para garantir timestamps diferentes
         
-        company.UpdateRazaoSocial(razaoSocial2);
+        company.UpdateRazaoSocial(effectiveStartDate, razaoSocial2);
         var segundaAtualizacao = company.UpdatedAt;
 
         // Assert
@@ -178,12 +183,12 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
         
         var mesmaRazaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
 
         // Act
-        company.UpdateRazaoSocial(mesmaRazaoSocial);
+        company.UpdateRazaoSocial(effectiveStartDate, mesmaRazaoSocial);
 
         // Assert - Mesmo sendo o mesmo valor, deve atualizar o UpdatedAt
         Assert.Equal(mesmaRazaoSocial, company.RazaoSocial);
@@ -196,12 +201,12 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
 
         // Act
-        company.UpdateRazaoSocial(novaRazaoSocial);
+        company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
 
         // Assert - CNPJ não deve ser alterado
         Assert.Equal(cnpj, company.Cnpj);
@@ -214,14 +219,14 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var idOriginal = company.Id;
         var createdAtOriginal = company.CreatedAt;
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
 
         // Act
-        company.UpdateRazaoSocial(novaRazaoSocial);
+        company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
 
         // Assert - Id e CreatedAt não devem ser alterados
         Assert.Equal(idOriginal, company.Id);
@@ -239,7 +244,7 @@ public class CompanyTests
         // Arrange & Act
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
 
         // Assert
         Assert.True(company.IsActive);
@@ -251,11 +256,11 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
         Assert.True(company.IsActive);
 
         // Act
-        company.Disable();
+        company.Disable(effectiveStartDate);
 
         // Assert
         Assert.False(company.IsActive);
@@ -267,12 +272,12 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
-        company.Disable();
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
+        company.Disable(effectiveStartDate);
         Assert.False(company.IsActive);
 
         // Act
-        company.Enable();
+        company.Enable(effectiveStartDate);
 
         // Assert
         Assert.True(company.IsActive);
@@ -284,13 +289,13 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
-        Assert.Null(company.UpdatedAt);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
+        Assert.NotNull(company.UpdatedAt);
 
         var antes = DateTime.UtcNow;
 
         // Act
-        company.Disable();
+        company.Disable(effectiveStartDate);
         var depois = DateTime.UtcNow;
 
         // Assert
@@ -304,8 +309,8 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
-        company.Disable();
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
+        company.Disable(effectiveStartDate);
         
         var updatedAtAnterior = company.UpdatedAt;
         Thread.Sleep(10);
@@ -313,7 +318,7 @@ public class CompanyTests
         var antes = DateTime.UtcNow;
 
         // Act
-        company.Enable();
+        company.Enable(effectiveStartDate);
         var depois = DateTime.UtcNow;
 
         // Assert
@@ -328,10 +333,10 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
 
         // Act - Ativar quando já está ativo
-        company.Enable();
+        company.Enable(effectiveStartDate);
 
         // Assert - Deve continuar ativo e atualizar UpdatedAt
         Assert.True(company.IsActive);
@@ -344,11 +349,11 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
-        company.Disable();
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
+        company.Disable(effectiveStartDate);
 
         // Act - Desativar quando já está inativo
-        company.Disable();
+        company.Disable(effectiveStartDate);
 
         // Assert - Deve continuar inativo e atualizar UpdatedAt
         Assert.False(company.IsActive);
@@ -361,18 +366,18 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
 
         // Act & Assert - Ciclo de ativação/desativação
         Assert.True(company.IsActive);
 
-        company.Disable();
+        company.Disable(effectiveStartDate);
         Assert.False(company.IsActive);
 
-        company.Enable();
+        company.Enable(effectiveStartDate);
         Assert.True(company.IsActive);
 
-        company.Disable();
+        company.Disable(effectiveStartDate);
         Assert.False(company.IsActive);
     }
 
@@ -382,10 +387,10 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
 
         // Act
-        company.Disable();
+        company.Disable(effectiveStartDate);
 
         // Assert - Razão Social e CNPJ não devem ser alterados
         Assert.Equal(razaoSocial, company.RazaoSocial);
@@ -399,11 +404,11 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
-        company.Disable();
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
+        company.Disable(effectiveStartDate);
 
         // Act
-        company.Enable();
+        company.Enable(effectiveStartDate);
 
         // Assert - Razão Social e CNPJ não devem ser alterados
         Assert.Equal(razaoSocial, company.RazaoSocial);
@@ -417,7 +422,7 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
         
         var output = new StringBuilder();
         var originalConsoleOut = Console.Out;
@@ -427,7 +432,7 @@ public class CompanyTests
         try
         {
             // Act
-            company.Disable();
+            company.Disable(effectiveStartDate);
             
             Console.Out.Flush();
             Console.SetOut(originalConsoleOut);
@@ -452,8 +457,8 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocial, cnpj);
-        company.Disable();
+        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
+        company.Disable(effectiveStartDate);
         
         var output = new StringBuilder();
         var originalConsoleOut = Console.Out;
@@ -463,7 +468,7 @@ public class CompanyTests
         try
         {
             // Act
-            company.Enable();
+            company.Enable(effectiveStartDate);
             
             Console.Out.Flush();
             Console.SetOut(originalConsoleOut);
@@ -492,7 +497,7 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
         
@@ -505,7 +510,7 @@ public class CompanyTests
         try
         {
             // Act
-            company.UpdateRazaoSocial(novaRazaoSocial);
+            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
             
             Console.Out.Flush();
             writer.Flush();
@@ -537,7 +542,7 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
         
@@ -550,7 +555,7 @@ public class CompanyTests
         try
         {
             // Act
-            company.UpdateRazaoSocial(novaRazaoSocial);
+            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
             
             // Força o flush e fecha o writer para garantir que todo o conteúdo seja capturado
             Console.Out.Flush();
@@ -562,7 +567,7 @@ public class CompanyTests
             // Assert
             Assert.Contains($"[BEFORE] Empresa {company.Id} está sendo atualizada...", consoleOutput);
             Assert.Contains($"[BEFORE] Razão Social atual: {razaoSocialInicial.Valor}", consoleOutput);
-            Assert.Contains("[BEFORE] UpdatedAt atual: null", consoleOutput);
+            Assert.Contains($"[BEFORE] UpdatedAt atual: {effectiveStartDate}", consoleOutput);
             Assert.Contains("[AFTER] UpdatedAt agora é:", consoleOutput);
             Assert.Contains($"Razão Social alterada para: {novaRazaoSocial.Valor}", consoleOutput);
             Assert.Contains(new string('-', 60), consoleOutput);
@@ -581,7 +586,7 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
         
@@ -594,7 +599,7 @@ public class CompanyTests
         try
         {
             // Act
-            company.UpdateRazaoSocial(novaRazaoSocial);
+            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
             
             Console.Out.Flush();
             Console.SetOut(originalConsoleOut);
@@ -603,7 +608,7 @@ public class CompanyTests
             var consoleOutput = output.ToString();
 
             // Assert
-            Assert.Contains("[BEFORE] UpdatedAt atual: null", consoleOutput);
+            Assert.Contains($"[BEFORE] UpdatedAt atual: {effectiveStartDate}", consoleOutput);
         }
         finally
         {
@@ -618,13 +623,13 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var primeiraRazaoSocial = RazaoSocial.Create("Empresa Primeira Alteração LTDA");
         var segundaRazaoSocial = RazaoSocial.Create("Empresa Segunda Alteração LTDA");
         
         // Primeira alteração (sem captura de log)
-        company.UpdateRazaoSocial(primeiraRazaoSocial);
+        company.UpdateRazaoSocial(effectiveStartDate, primeiraRazaoSocial);
         
         // Captura a saída do console na segunda alteração
         var output = new StringBuilder();
@@ -635,7 +640,7 @@ public class CompanyTests
         try
         {
             // Act
-            company.UpdateRazaoSocial(segundaRazaoSocial);
+            company.UpdateRazaoSocial(effectiveStartDate, segundaRazaoSocial);
             
             Console.Out.Flush();
             Console.SetOut(originalConsoleOut);
@@ -662,7 +667,7 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var novaRazaoSocial = RazaoSocial.Create("Empresa Nova LTDA");
         
@@ -675,7 +680,7 @@ public class CompanyTests
         try
         {
             // Act
-            company.UpdateRazaoSocial(novaRazaoSocial);
+            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
             
             Console.Out.Flush();
             Console.SetOut(originalConsoleOut);
@@ -700,7 +705,7 @@ public class CompanyTests
         // Arrange
         var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(razaoSocialInicial, cnpj);
+        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
         
@@ -713,7 +718,7 @@ public class CompanyTests
         try
         {
             // Act
-            company.UpdateRazaoSocial(novaRazaoSocial);
+            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
             
             Console.Out.Flush();
             Console.SetOut(originalConsoleOut);
@@ -750,7 +755,7 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company1 = new Company(razaoSocial, cnpj);
+        var company1 = new Company(effectiveStartDate, razaoSocial, cnpj);
         var company2 = company1;
 
         // Act & Assert
@@ -764,8 +769,8 @@ public class CompanyTests
         // Arrange
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
-        var company1 = new Company(razaoSocial, cnpj);
-        var company2 = new Company(razaoSocial, cnpj);
+        var company1 = new Company(effectiveStartDate, razaoSocial, cnpj);
+        var company2 = new Company(effectiveStartDate.AddDays(1), razaoSocial, cnpj);
 
         // Act & Assert
         Assert.False(company1.Equals(company2));

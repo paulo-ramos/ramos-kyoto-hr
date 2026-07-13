@@ -32,17 +32,18 @@ public class CompaniesController : ControllerBase
         [FromBody] UpdateCompanyNameInput companyInput,
         [FromServices] IUpdateCompanyNameUseCase useCase)
     {
-        var input = new UpdateCompanyNameInput(id, companyInput.NewName);
-        await useCase.ExecuteAsync(input);
+        var input = new UpdateCompanyNameInput(companyInput.EffectiveStartDate, companyInput.NewName);
+        await useCase.ExecuteAsync(id, input);
         return NoContent();
     }
     
     [HttpPut("{id:guid}/enable")]
     public async Task<IActionResult> Enable(
         [FromRoute] Guid id,
+        [FromBody] DateOnly effectiveStartDate,
         [FromServices] IEnableCompanyByIdUseCase useCase)
     {
-        var input = new EnableCompanyByIdInput(id);
+        var input = new EnableCompanyByIdInput(effectiveStartDate, id);
         var result = await useCase.ExecuteAsync(input);
         return CreatedAtAction(nameof(Enable), new { id = result.Id }, result);
     }
@@ -50,9 +51,10 @@ public class CompaniesController : ControllerBase
     [HttpPut("{id:guid}/disable")]
     public async Task<IActionResult> Disable(
         [FromRoute] Guid id,
+        [FromBody] DateOnly effectiveStartDate,
         [FromServices] IDisableCompanyByIdUseCase useCase)
     {
-        var input = new DisableCompanyByIdInput(id);
+        var input = new DisableCompanyByIdInput(effectiveStartDate, id);
         var result = await useCase.ExecuteAsync(input);
         return CreatedAtAction(nameof(Disable), new { id = result.Id }, result);
     }

@@ -28,6 +28,7 @@ public class GetCompanyByCnpjUseCase : IGetCompanyByCnpjUseCase
 
         return new GetCompanyByCnpjResult(
             company.Id,
+            company.EffectiveStartDate,
             company.Cnpj,
             company.RazaoSocial,
             company.IsActive,

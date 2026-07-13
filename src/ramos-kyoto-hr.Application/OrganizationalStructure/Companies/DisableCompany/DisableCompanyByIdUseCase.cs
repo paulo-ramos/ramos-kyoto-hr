@@ -23,12 +23,13 @@ public class DisableCompanyByIdUseCase : IDisableCompanyByIdUseCase
             throw new KeyNotFoundException($"Empresa com o ID {companyInput.CompanyId} não foi encontrada.");
         }
 
-        company.Disable();
+        company.Disable(companyInput.EffectiveStartDate);
 
         await _companyRepository.UpdateAsync(company);
         
         return new DisableCompanyByIdResult(
             company.Id,
+            company.EffectiveStartDate,
             company.Cnpj,
             company.RazaoSocial,
             company.IsActive,

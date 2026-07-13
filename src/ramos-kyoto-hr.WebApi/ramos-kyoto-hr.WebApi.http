@@ -40,7 +40,7 @@ Accept: application/json
 ###
 
 ### Get Company By CNPJ
-GET {{hostAddress}}/api/organization-structure/companies/12.345.678/0001-90/cnpj
+GET {{hostAddress}}/api/organization-structure/companies/12345678000190/cnpj
 Accept: application/json
 
 ###

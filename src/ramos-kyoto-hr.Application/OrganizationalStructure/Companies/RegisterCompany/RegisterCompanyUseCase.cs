@@ -27,12 +27,13 @@ public class RegisterCompanyUseCase : IRegisterCompanyUseCase
             throw new InvalidOperationException($"Já existe uma empresa cadastrada com o CNPJ {cnpj}.");
         }
 
-        var company = new Company(razaoSocial, cnpj);
+        var company = new Company(companyInput.EffectiveStartDate, razaoSocial, cnpj);
 
         await _companyRepository.AddAsync(company);
 
         return new RegisterCompanyResult(
             company.Id,
+            company.EffectiveStartDate,
             company.Cnpj,
             company.RazaoSocial,
             company.CreatedAt

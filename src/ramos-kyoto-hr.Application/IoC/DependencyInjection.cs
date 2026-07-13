@@ -12,7 +12,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        // 🏢 Casos de Uso do Contexto: OrganizationalStructure -> Companies
+        //Casos de Uso do Contexto: OrganizationalStructure -> Companies
         services.AddScoped<IRegisterCompanyUseCase, RegisterCompanyUseCase>();
         services.AddScoped<IUpdateCompanyNameUseCase, UpdateCompanyNameUseCase>();
         services.AddScoped<IGetCompanyByIdUseCase, GetCompanyByIdUseCase>();

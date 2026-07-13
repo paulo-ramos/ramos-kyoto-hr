@@ -2,27 +2,29 @@ namespace ramos_kyoto_hr.Domain.Base;
 
 public abstract class Entity : IEquatable<Entity>
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; protected set; }
+    public DateOnly EffectiveStartDate { get; protected set; }
     public bool IsActive { get; protected set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
     
     
-    protected Entity()
+    protected Entity(DateOnly effectiveStartDate)
     {
-        Id = Guid.NewGuid();
+        EffectiveStartDate = effectiveStartDate;
         IsActive = true;
         CreatedAt = DateTime.UtcNow;
     }
     
-    protected Entity(Guid id, bool isActive, DateTime createdAt, DateTime updatedAt)
+    protected Entity(Guid id, DateOnly effectiveStartDate, bool isActive, DateTime createdAt, DateTime updatedAt)
     {
         Id = id;
+        EffectiveStartDate = effectiveStartDate;
         IsActive = true;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
     }
-
+    
     protected void Update(Action action)
     {
         if (action == null)
