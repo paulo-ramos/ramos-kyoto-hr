@@ -5,5 +5,6 @@ public record RegisterCompanyResult(
     DateOnly EffectiveStartDate,
     string Cnpj,
     string RazaoSocial,
+    bool IsActive,
     DateTime CreatedAt
 );

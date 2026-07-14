@@ -29,8 +29,7 @@ public class ListCompaniesUseCase : IListCompaniesUseCase
             Cnpj: c.Cnpj,
             RazaoSocial: c.RazaoSocial,
             IsActive: c.IsActive,
-            CreatedAt: c.CreatedAt,
-            UpdatedAt: c.UpdatedAt
+            CreatedAt: c.CreatedAt
 
         )).ToList();
 

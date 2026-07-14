@@ -8,6 +8,5 @@ public record UpdateCompanyNameResult(
     string Cnpj,
     string RazaoSocial,
     bool IsActive,
-    DateTime CreatedAt,
-    DateTime? UpdatedAt
+    DateTime CreatedAt
 );

@@ -30,8 +30,7 @@ public class GetCompanyByIdUseCase : IGetCompanyByIdUseCase
             company.Cnpj,
             company.RazaoSocial,
             company.IsActive,
-            company.CreatedAt,
-            company.UpdatedAt
+            company.CreatedAt
         );
     }
 }

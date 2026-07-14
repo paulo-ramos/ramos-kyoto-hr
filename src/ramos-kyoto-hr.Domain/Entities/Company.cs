@@ -9,88 +9,69 @@ public sealed class Company : Entity
     public Cnpj Cnpj { get; private set; }
     public RazaoSocial RazaoSocial { get; private set; }
     
-    public Company(DateOnly effectiveStartDate, RazaoSocial razaoSocial, Cnpj cnpj):base(effectiveStartDate)
+    public Company(DateOnly effectiveStartDate, RazaoSocial razaoSocial, Cnpj cnpj, bool isActive = true) 
+        : base(effectiveStartDate, isActive)
     {
         RazaoSocial = razaoSocial ?? throw new ArgumentNullException(nameof(razaoSocial));
-        EffectiveStartDate = effectiveStartDate != DateOnly.MinValue ? effectiveStartDate: throw new ArgumentNullException(nameof(effectiveStartDate));
         Cnpj = cnpj ?? throw new ArgumentNullException(nameof(cnpj));
-        SetId();
+        IsActive = isActive;
+        Id = GuidGenerator.GuidOrganizationalStructure(Cnpj.Valor, effectiveStartDate);
     }
     
-    public bool UpdateRazaoSocial(DateOnly effectiveStartDate,RazaoSocial novaRazaoSocial)
+    public Company? UpdateRazaoSocial(DateOnly newEffectiveStartDate, RazaoSocial novaRazaoSocial)
     {
         if (novaRazaoSocial == null)
             throw new ArgumentNullException(nameof(novaRazaoSocial));
 
-        if (novaRazaoSocial == this.RazaoSocial)
+        ValidateNewEffectiveDate(newEffectiveStartDate);
+
+        if (novaRazaoSocial == RazaoSocial)
         {
-            return false;
+            return null;
         }
-
-        Update(() =>
-        {
-            EffectiveStartDate = effectiveStartDate;
-            RazaoSocial = novaRazaoSocial;
-        });
-
-        return true;
+        
+        return CreateNewVersion(newEffectiveStartDate, novaRazaoSocial: novaRazaoSocial);
     }
     
-    public bool Enable(DateOnly effectiveStartDate)
+    public Company? Enable(DateOnly newEffectiveStartDate)
     {
+        ValidateNewEffectiveDate(newEffectiveStartDate);
+        
         if (IsStatusActive())
         {
-            return false;
+            return null;
         }
 
-        Update(() =>
-        {
-            EffectiveStartDate = effectiveStartDate;
-            IsActive = true;
-        });
-        
-        return true;
+        return CreateNewVersion(newEffectiveStartDate, newIsActive: true);
     }
     
-    public bool Disable(DateOnly effectiveStartDate)
+    public Company? Disable(DateOnly newEffectiveStartDate)
     {
+        ValidateNewEffectiveDate(newEffectiveStartDate);
+        
         if (IsStatusDeactive())
         {
-            return false;
+            return null;
         }
 
-        Update(() =>
-        {
-            EffectiveStartDate = effectiveStartDate;
-            IsActive = false;
-        });
-        
-        return true;
-    }
-
-    private void SetId()
-    {
-        Update(() =>
-        {
-            Id = GuidGenerator.GuidOrganizationalStructure(Cnpj.Valor, EffectiveStartDate);
-        });
+        return CreateNewVersion(newEffectiveStartDate, newIsActive: false);
     }
     
-    protected override void OnBeforeUpdate()
+    #region Private Helpers
+
+    private Company CreateNewVersion(
+        DateOnly newEffectiveStartDate, 
+        RazaoSocial? novaRazaoSocial = null, 
+        bool? newIsActive = null)
     {
-        Console.WriteLine($"[BEFORE] Empresa {Id} está sendo atualizada...");
-        Console.WriteLine($"[BEFORE] Razão Social atual: {RazaoSocial.Valor}");
-        Console.WriteLine($"[BEFORE] UpdatedAt atual: {UpdatedAt?.ToString() ?? "null"}");
+        return new Company(
+            newEffectiveStartDate,
+            novaRazaoSocial ?? this.RazaoSocial,
+            this.Cnpj,
+            newIsActive ?? this.IsActive
+        );
     }
 
-    protected override void OnAfterUpdate()
-    {
-        Console.WriteLine($"[AFTER] UpdatedAt agora é: {UpdatedAt}");
-        
-        var registro = $"{UpdatedAt:yyyy-MM-dd HH:mm:ss} - Razão Social alterada para: {RazaoSocial.Valor}";
-        Console.WriteLine(registro);
-        
-        Console.WriteLine(new string('-', 60));
-    }
+    #endregion
     
 }

@@ -16,4 +16,5 @@ public interface ICompanyRepository
         int page,
         int pageSize,
         CancellationToken cancellationToken);
+
 }

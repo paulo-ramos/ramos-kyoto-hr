@@ -6,50 +6,41 @@ public abstract class Entity : IEquatable<Entity>
     public DateOnly EffectiveStartDate { get; protected set; }
     public bool IsActive { get; protected set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime? UpdatedAt { get; private set; }
+   
     
-    
-    protected Entity(DateOnly effectiveStartDate)
+    protected Entity(DateOnly effectiveStartDate, bool isActive = true)
     {
         EffectiveStartDate = effectiveStartDate;
-        IsActive = true;
+        IsActive = isActive;
         CreatedAt = DateTime.UtcNow;
     }
     
-    protected Entity(Guid id, DateOnly effectiveStartDate, bool isActive, DateTime createdAt, DateTime updatedAt)
+    protected Entity(Guid id, DateOnly effectiveStartDate, bool isActive, DateTime createdAt)
     {
         Id = id;
         EffectiveStartDate = effectiveStartDate;
         IsActive = true;
         CreatedAt = createdAt;
-        UpdatedAt = updatedAt;
     }
     
-    protected void Update(Action action)
+    protected void ValidateNewEffectiveDate(DateOnly newEffectiveStartDate)
     {
-        if (action == null)
-            throw new ArgumentNullException(nameof(action));
-
-        OnBeforeUpdate();
-        
-        action();
-
-        UpdatedAt = DateTime.UtcNow;
-        
-        OnAfterUpdate();
+        if (newEffectiveStartDate <= EffectiveStartDate)
+        {
+            throw new InvalidOperationException(
+                $"A nova data efetiva ({newEffectiveStartDate:yyyy-MM-dd}) deve ser maior que a data efetiva atual ({EffectiveStartDate:yyyy-MM-dd})."
+            );
+        }
     }
-    
-    protected virtual void OnBeforeUpdate() { }
-    protected virtual void OnAfterUpdate() { }
 
     public bool IsStatusActive()
     {
-        return this.IsActive == true;
+        return this.IsActive;
     }
     
     public bool IsStatusDeactive()
     {
-        return this.IsActive == false;
+        return !this.IsActive;
     }
     
     public bool Equals(Entity? other)

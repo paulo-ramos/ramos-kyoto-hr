@@ -37,6 +37,7 @@ public class RegisterCompanyUseCase : IRegisterCompanyUseCase
             company.EffectiveStartDate,
             company.Cnpj,
             company.RazaoSocial,
+            company.IsActive,
             company.CreatedAt
         );
     }

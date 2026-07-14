@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ramos-kyoto-hr.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0b7b1690fd669c9a8dd675060eb4602c053ddd9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d7911b9c0d6e3f22c00fb9173876ea9bc05efb8")]
 [assembly: System.Reflection.AssemblyProductAttribute("ramos-kyoto-hr.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ramos-kyoto-hr.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -18,32 +18,38 @@ public class UpdateCompanyNameUseCase : IUpdateCompanyNameUseCase
         if (companyInput == null)
             throw new ArgumentNullException(nameof(companyInput), "Os dados de entrada são obrigatórios.");
 
-        var company = await _companyRepository.GetByIdAsync(id);
+        var currentCompany = await _companyRepository.GetByIdAsync(id);
         
-        if (company == null)
+        if (currentCompany == null)
         {
             throw new EntityNotFoundException("Company", id);
         }
 
         var razaoSocial = RazaoSocial.Create(companyInput.NewName);
         
-        var hasChanged = company.UpdateRazaoSocial(companyInput.EffectiveStartDate, razaoSocial);
+        var newCompany = currentCompany.UpdateRazaoSocial(companyInput.EffectiveStartDate, razaoSocial);
 
-        if (hasChanged)
+        if (newCompany == null)
         {
-            await _companyRepository.UpdateAsync(company);
+            return new UpdateCompanyNameResult(
+                currentCompany.Id,
+                currentCompany.EffectiveStartDate,
+                currentCompany.Cnpj,
+                currentCompany.RazaoSocial,
+                currentCompany.IsActive,
+                currentCompany.CreatedAt
+            );
         }
 
-        await _companyRepository.UpdateAsync(company);
+        await _companyRepository.AddAsync(newCompany);
         
         return new UpdateCompanyNameResult(
-            company.Id,
-            company.EffectiveStartDate,
-            company.Cnpj,
-            company.RazaoSocial,
-            company.IsActive,
-            company.CreatedAt,
-            company.UpdatedAt
+            newCompany.Id,
+            newCompany.EffectiveStartDate,
+            newCompany.Cnpj,
+            newCompany.RazaoSocial,
+            newCompany.IsActive,
+            newCompany.CreatedAt
         );
     }
 }

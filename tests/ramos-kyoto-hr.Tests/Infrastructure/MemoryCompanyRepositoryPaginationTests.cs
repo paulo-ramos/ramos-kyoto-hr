@@ -48,12 +48,14 @@ public class MemoryCompanyRepositoryPaginationTests : IDisposable
 
         if (!isActive)
         {
-            company.Disable(_effectiveDate);
+            var company1 = company.Disable(_effectiveDate.AddDays(1));
+            await _repository.AddAsync(company1, TestContext.Current.CancellationToken);
+            _testCompanies.Add(company1);
+            return company1;
         }
 
         await _repository.AddAsync(company, TestContext.Current.CancellationToken);
         _testCompanies.Add(company);
-        
         return company;
     }
 

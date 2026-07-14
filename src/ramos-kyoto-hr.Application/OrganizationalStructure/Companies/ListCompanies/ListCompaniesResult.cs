@@ -14,6 +14,5 @@ public record CompanyDto(
     string Cnpj,
     string RazaoSocial,
     bool IsActive,
-    DateTime CreatedAt,
-    DateTime? UpdatedAt
+    DateTime CreatedAt
 );

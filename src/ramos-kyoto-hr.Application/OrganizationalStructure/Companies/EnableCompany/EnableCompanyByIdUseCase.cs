@@ -17,28 +17,36 @@ public class EnableCompanyByIdUseCase : IEnableCompanyByIdUseCase
         if (companyInput == null)
             throw new ArgumentNullException(nameof(companyInput), "Os dados de entrada são obrigatórios.");
 
-        var company = await _companyRepository.GetByIdAsync(companyInput.CompanyId);
+        var currentCompany = await _companyRepository.GetByIdAsync(companyInput.CompanyId);
         
-        if (company == null)
+        if (currentCompany == null)
         {
             throw new EntityNotFoundException("Company", companyInput.CompanyId);
         }
         
-        var hasChanged = company.Enable(companyInput.EffectiveStartDate);
+        var newCompany = currentCompany.Enable(companyInput.EffectiveStartDate);
 
-        if (hasChanged)
+        if (newCompany == null)
         {
-            await _companyRepository.UpdateAsync(company);
+            return new EnableCompanyByIdResult(
+                currentCompany.Id,
+                currentCompany.EffectiveStartDate,
+                currentCompany.Cnpj,
+                currentCompany.RazaoSocial,
+                currentCompany.IsActive,
+                currentCompany.CreatedAt
+            );
         }
         
+        await _companyRepository.AddAsync(newCompany);
+        
         return new EnableCompanyByIdResult(
-            company.Id,
-            company.EffectiveStartDate,
-            company.Cnpj,
-            company.RazaoSocial,
-            company.IsActive,
-            company.CreatedAt,
-            company.UpdatedAt
+            newCompany.Id,
+            newCompany.EffectiveStartDate,
+            newCompany.Cnpj,
+            newCompany.RazaoSocial,
+            newCompany.IsActive,
+            newCompany.CreatedAt
         );
     }
 }

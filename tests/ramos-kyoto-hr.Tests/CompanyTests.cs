@@ -8,7 +8,7 @@ namespace ramos_kyoto_hr.Tests;
 
 public class CompanyTests
 {
-    private const string CnpjValido = "11.222.333/0001-81"; // CNPJ válido para testes
+    private const string CnpjValido = "11.222.333/0001-81";
     public DateOnly effectiveStartDate =  DateOnly.FromDateTime(DateTime.UtcNow);
     
     #region Testes de Criação
@@ -32,7 +32,6 @@ public class CompanyTests
         Assert.Equal(cnpj, company.Cnpj);
         Assert.True(company.IsActive);
         Assert.NotEqual(default, company.CreatedAt);
-        Assert.NotNull(company.UpdatedAt);
         Assert.Equal(company.Id, id);
     }
 
@@ -104,11 +103,12 @@ public class CompanyTests
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
 
         // Act
-        company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
+        var companyAlterada = company.UpdateRazaoSocial(effectiveStartDate.AddDays(1), novaRazaoSocial);
 
         // Assert
-        Assert.Equal(novaRazaoSocial, company.RazaoSocial);
-        Assert.NotEqual(razaoSocialInicial, company.RazaoSocial);
+        Assert.Equal(novaRazaoSocial, companyAlterada?.RazaoSocial);
+        Assert.NotEqual(razaoSocialInicial, companyAlterada?.RazaoSocial);
+        Assert.Equal(razaoSocialInicial, company.RazaoSocial);
     }
 
     [Fact]
@@ -119,18 +119,15 @@ public class CompanyTests
         var cnpj = Cnpj.Create(CnpjValido);
         var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
         
-        Assert.NotNull(company.UpdatedAt);
-        
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
-        var antes = DateTime.UtcNow;
+        var antes = DateOnly.FromDateTime(DateTime.UtcNow);
 
         // Act
-        company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
-        var depois = DateTime.UtcNow;
+        company.UpdateRazaoSocial(effectiveStartDate.AddDays(1), novaRazaoSocial);
+        var depois = DateOnly.FromDateTime(DateTime.UtcNow);
 
         // Assert
-        Assert.NotNull(company.UpdatedAt);
-        Assert.True(company.UpdatedAt >= antes && company.UpdatedAt <= depois);
+        Assert.True(company.EffectiveStartDate >= antes && company.EffectiveStartDate <= depois);
     }
 
     [Fact]
@@ -147,7 +144,6 @@ public class CompanyTests
         
         // Verifica que nada foi alterado
         Assert.Equal(razaoSocialInicial, company.RazaoSocial);
-        Assert.NotNull(company.UpdatedAt);
     }
 
     [Fact]
@@ -162,37 +158,17 @@ public class CompanyTests
         var razaoSocial2 = RazaoSocial.Create("Empresa Alterada 2 LTDA");
 
         // Act
-        company.UpdateRazaoSocial(effectiveStartDate, razaoSocial1);
-        var primeiraAtualizacao = company.UpdatedAt;
+        var company1 = company.UpdateRazaoSocial(effectiveStartDate.AddDays(1), razaoSocial1);
+        var primeiraAtualizacao = company1?.CreatedAt;
         
         Thread.Sleep(10); // Pequeno delay para garantir timestamps diferentes
         
-        company.UpdateRazaoSocial(effectiveStartDate, razaoSocial2);
-        var segundaAtualizacao = company.UpdatedAt;
+        var company2 = company1?.UpdateRazaoSocial(effectiveStartDate.AddDays(2), razaoSocial2);
+        var segundaAtualizacao = company2?.CreatedAt;
 
         // Assert
-        Assert.Equal(razaoSocial2, company.RazaoSocial);
-        Assert.NotNull(primeiraAtualizacao);
-        Assert.NotNull(segundaAtualizacao);
+        Assert.Equal(razaoSocial2, company2?.RazaoSocial);
         Assert.True(segundaAtualizacao > primeiraAtualizacao);
-    }
-
-    [Fact]
-    public void DeveAlterarRazaoSocialParaMesmoValor()
-    {
-        // Arrange
-        var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-        
-        var mesmaRazaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
-
-        // Act
-        company.UpdateRazaoSocial(effectiveStartDate, mesmaRazaoSocial);
-
-        // Assert - Mesmo sendo o mesmo valor, deve atualizar o UpdatedAt
-        Assert.Equal(mesmaRazaoSocial, company.RazaoSocial);
-        Assert.NotNull(company.UpdatedAt);
     }
 
     [Fact]
@@ -206,11 +182,13 @@ public class CompanyTests
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
 
         // Act
-        company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
+        var companyAlterada = company.UpdateRazaoSocial(effectiveStartDate.AddDays(1), novaRazaoSocial);
 
         // Assert - CNPJ não deve ser alterado
         Assert.Equal(cnpj, company.Cnpj);
-        Assert.Equal(novaRazaoSocial, company.RazaoSocial);
+        Assert.Equal(cnpj, companyAlterada?.Cnpj);
+        Assert.NotEqual(novaRazaoSocial, company.RazaoSocial);
+        Assert.Equal(novaRazaoSocial, companyAlterada?.RazaoSocial);
     }
 
     [Fact]
@@ -226,12 +204,12 @@ public class CompanyTests
         var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
 
         // Act
-        company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
+        var companyAlterada = company.UpdateRazaoSocial(effectiveStartDate.AddDays(1), novaRazaoSocial);
 
-        // Assert - Id e CreatedAt não devem ser alterados
+        // Assert - Id não deve ser alterado
         Assert.Equal(idOriginal, company.Id);
         Assert.Equal(createdAtOriginal, company.CreatedAt);
-        Assert.NotEqual(razaoSocialInicial, company.RazaoSocial);
+        Assert.NotEqual(razaoSocialInicial, companyAlterada?.RazaoSocial);
     }
 
     #endregion
@@ -260,10 +238,11 @@ public class CompanyTests
         Assert.True(company.IsActive);
 
         // Act
-        company.Disable(effectiveStartDate);
+        var company1 = company.Disable(effectiveStartDate.AddDays(1));
 
         // Assert
-        Assert.False(company.IsActive);
+        Assert.True(company.IsActive);
+        Assert.False(company1?.IsActive);
     }
 
     [Fact]
@@ -273,14 +252,14 @@ public class CompanyTests
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
         var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-        company.Disable(effectiveStartDate);
-        Assert.False(company.IsActive);
+        var companyAlterada1 = company.Disable(effectiveStartDate.AddDays(1));
+        Assert.False(companyAlterada1?.IsActive);
 
         // Act
-        company.Enable(effectiveStartDate);
+        var companyAlterada2 = companyAlterada1?.Enable(effectiveStartDate.AddDays(2));
 
         // Assert
-        Assert.True(company.IsActive);
+        Assert.True(companyAlterada2?.IsActive);
     }
 
     [Fact]
@@ -290,74 +269,15 @@ public class CompanyTests
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
         var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-        Assert.NotNull(company.UpdatedAt);
 
         var antes = DateTime.UtcNow;
 
         // Act
-        company.Disable(effectiveStartDate);
+        var company1 = company.Disable(effectiveStartDate.AddDays(1));
         var depois = DateTime.UtcNow;
 
         // Assert
-        Assert.NotNull(company.UpdatedAt);
-        Assert.True(company.UpdatedAt >= antes && company.UpdatedAt <= depois);
-    }
-
-    [Fact]
-    public void DeveAtualizarUpdatedAtAoAtivar()
-    {
-        // Arrange
-        var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-        company.Disable(effectiveStartDate);
-        
-        var updatedAtAnterior = company.UpdatedAt;
-        Thread.Sleep(10);
-        
-        var antes = DateTime.UtcNow;
-
-        // Act
-        company.Enable(effectiveStartDate);
-        var depois = DateTime.UtcNow;
-
-        // Assert
-        Assert.NotNull(company.UpdatedAt);
-        Assert.True(company.UpdatedAt >= antes && company.UpdatedAt <= depois);
-        Assert.True(company.UpdatedAt > updatedAtAnterior);
-    }
-
-    [Fact]
-    public void DevePermitirMultiplasAtivacoes()
-    {
-        // Arrange
-        var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-
-        // Act - Ativar quando já está ativo
-        company.Enable(effectiveStartDate);
-
-        // Assert - Deve continuar ativo e atualizar UpdatedAt
-        Assert.True(company.IsActive);
-        Assert.NotNull(company.UpdatedAt);
-    }
-
-    [Fact]
-    public void DevePermitirMultiplasDesativacoes()
-    {
-        // Arrange
-        var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-        company.Disable(effectiveStartDate);
-
-        // Act - Desativar quando já está inativo
-        company.Disable(effectiveStartDate);
-
-        // Assert - Deve continuar inativo e atualizar UpdatedAt
-        Assert.False(company.IsActive);
-        Assert.NotNull(company.UpdatedAt);
+        Assert.True(company1?.CreatedAt >= antes && company1?.CreatedAt <= depois);
     }
 
     [Fact]
@@ -368,17 +288,16 @@ public class CompanyTests
         var cnpj = Cnpj.Create(CnpjValido);
         var company = new Company(effectiveStartDate, razaoSocial, cnpj);
 
-        // Act & Assert - Ciclo de ativação/desativação
         Assert.True(company.IsActive);
 
-        company.Disable(effectiveStartDate);
-        Assert.False(company.IsActive);
+        var companyAlterada1 = company.Disable(effectiveStartDate.AddDays(1));
+        Assert.False(companyAlterada1?.IsActive);
 
-        company.Enable(effectiveStartDate);
-        Assert.True(company.IsActive);
+        var companyAlterada2 = companyAlterada1?.Enable(effectiveStartDate.AddDays(2));
+        Assert.True(companyAlterada2?.IsActive);
 
-        company.Disable(effectiveStartDate);
-        Assert.False(company.IsActive);
+        var companyAlterada3 = companyAlterada2?.Disable(effectiveStartDate.AddDays(3));
+        Assert.False(companyAlterada3?.IsActive);
     }
 
     [Fact]
@@ -390,12 +309,13 @@ public class CompanyTests
         var company = new Company(effectiveStartDate, razaoSocial, cnpj);
 
         // Act
-        company.Disable(effectiveStartDate);
+        var companyAlterada = company.Disable(effectiveStartDate.AddDays(1));
 
         // Assert - Razão Social e CNPJ não devem ser alterados
         Assert.Equal(razaoSocial, company.RazaoSocial);
         Assert.Equal(cnpj, company.Cnpj);
-        Assert.False(company.IsActive);
+        Assert.True(company.IsActive);
+        Assert.False(companyAlterada?.IsActive);
     }
 
     [Fact]
@@ -405,344 +325,15 @@ public class CompanyTests
         var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
         var cnpj = Cnpj.Create(CnpjValido);
         var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-        company.Disable(effectiveStartDate);
+        var company1 = company.Disable(effectiveStartDate.AddDays(1));
 
         // Act
-        company.Enable(effectiveStartDate);
+        var company2 = company1.Enable(effectiveStartDate.AddDays(2));
 
         // Assert - Razão Social e CNPJ não devem ser alterados
-        Assert.Equal(razaoSocial, company.RazaoSocial);
-        Assert.Equal(cnpj, company.Cnpj);
-        Assert.True(company.IsActive);
-    }
-
-    [Fact]
-    public void DeveChamarHooksAoDesativar()
-    {
-        // Arrange
-        var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-        
-        var output = new StringBuilder();
-        var originalConsoleOut = Console.Out;
-        var writer = new StringWriter(output);
-        Console.SetOut(writer);
-
-        try
-        {
-            // Act
-            company.Disable(effectiveStartDate);
-            
-            Console.Out.Flush();
-            Console.SetOut(originalConsoleOut);
-            writer.Close();
-            
-            var consoleOutput = output.ToString();
-
-            // Assert - Hooks devem ser executados
-            Assert.Contains("[BEFORE]", consoleOutput);
-            Assert.Contains("[AFTER]", consoleOutput);
-        }
-        finally
-        {
-            Console.SetOut(originalConsoleOut);
-            writer.Dispose();
-        }
-    }
-
-    [Fact]
-    public void DeveChamarHooksAoAtivar()
-    {
-        // Arrange
-        var razaoSocial = RazaoSocial.Create("Empresa Teste LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocial, cnpj);
-        company.Disable(effectiveStartDate);
-        
-        var output = new StringBuilder();
-        var originalConsoleOut = Console.Out;
-        var writer = new StringWriter(output);
-        Console.SetOut(writer);
-
-        try
-        {
-            // Act
-            company.Enable(effectiveStartDate);
-            
-            Console.Out.Flush();
-            Console.SetOut(originalConsoleOut);
-            writer.Close();
-            
-            var consoleOutput = output.ToString();
-
-            // Assert - Hooks devem ser executados
-            Assert.Contains("[BEFORE]", consoleOutput);
-            Assert.Contains("[AFTER]", consoleOutput);
-        }
-        finally
-        {
-            Console.SetOut(originalConsoleOut);
-            writer.Dispose();
-        }
-    }
-
-    #endregion
-
-    #region Testes de Logs no Console
-
-    [Fact]
-    public void DiagnosticoCapturaDeLogs()
-    {
-        // Arrange
-        var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
-        
-        var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
-        
-        // Captura a saída do console
-        var output = new StringBuilder();
-        var originalConsoleOut = Console.Out;
-        var writer = new StringWriter(output);
-        Console.SetOut(writer);
-
-        try
-        {
-            // Act
-            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
-            
-            Console.Out.Flush();
-            writer.Flush();
-            
-            var consoleOutput = output.ToString();
-            
-            // Restaura antes de imprimir o diagnóstico
-            Console.SetOut(originalConsoleOut);
-            
-            // Diagnóstico - imprime o conteúdo capturado
-            System.Console.WriteLine("=== CONTEÚDO CAPTURADO ===");
-            System.Console.WriteLine($"Tamanho: {consoleOutput.Length} caracteres");
-            System.Console.WriteLine(consoleOutput);
-            System.Console.WriteLine("=== FIM DO CONTEÚDO ===");
-            
-            // Assert - apenas verifica que algo foi capturado
-            Assert.NotEmpty(consoleOutput);
-        }
-        finally
-        {
-            Console.SetOut(originalConsoleOut);
-            writer.Dispose();
-        }
-    }
-
-    [Fact]
-    public void DeveExibirLogsNoConsoleAntesEDepoisDaAlteracao()
-    {
-        // Arrange
-        var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
-        
-        var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
-        
-        // Captura a saída do console
-        var output = new StringBuilder();
-        var originalConsoleOut = Console.Out;
-        var writer = new StringWriter(output);
-        Console.SetOut(writer);
-
-        try
-        {
-            // Act
-            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
-            
-            // Força o flush e fecha o writer para garantir que todo o conteúdo seja capturado
-            Console.Out.Flush();
-            Console.SetOut(originalConsoleOut);
-            writer.Close();
-            
-            var consoleOutput = output.ToString();
-
-            // Assert
-            Assert.Contains($"[BEFORE] Empresa {company.Id} está sendo atualizada...", consoleOutput);
-            Assert.Contains($"[BEFORE] Razão Social atual: {razaoSocialInicial.Valor}", consoleOutput);
-            Assert.Contains($"[BEFORE] UpdatedAt atual: {effectiveStartDate}", consoleOutput);
-            Assert.Contains("[AFTER] UpdatedAt agora é:", consoleOutput);
-            Assert.Contains($"Razão Social alterada para: {novaRazaoSocial.Valor}", consoleOutput);
-            Assert.Contains(new string('-', 60), consoleOutput);
-        }
-        finally
-        {
-            // Restaura o console original
-            Console.SetOut(originalConsoleOut);
-            writer.Dispose();
-        }
-    }
-
-    [Fact]
-    public void DeveExibirLogComUpdatedAtNullNaPrimeiraAlteracao()
-    {
-        // Arrange
-        var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
-        
-        var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
-        
-        // Captura a saída do console
-        var output = new StringBuilder();
-        var originalConsoleOut = Console.Out;
-        var writer = new StringWriter(output);
-        Console.SetOut(writer);
-
-        try
-        {
-            // Act
-            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
-            
-            Console.Out.Flush();
-            Console.SetOut(originalConsoleOut);
-            writer.Close();
-            
-            var consoleOutput = output.ToString();
-
-            // Assert
-            Assert.Contains($"[BEFORE] UpdatedAt atual: {effectiveStartDate}", consoleOutput);
-        }
-        finally
-        {
-            Console.SetOut(originalConsoleOut);
-            writer.Dispose();
-        }
-    }
-
-    [Fact]
-    public void DeveExibirLogComUpdatedAtPreenchidoNaSegundaAlteracao()
-    {
-        // Arrange
-        var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
-        
-        var primeiraRazaoSocial = RazaoSocial.Create("Empresa Primeira Alteração LTDA");
-        var segundaRazaoSocial = RazaoSocial.Create("Empresa Segunda Alteração LTDA");
-        
-        // Primeira alteração (sem captura de log)
-        company.UpdateRazaoSocial(effectiveStartDate, primeiraRazaoSocial);
-        
-        // Captura a saída do console na segunda alteração
-        var output = new StringBuilder();
-        var originalConsoleOut = Console.Out;
-        var writer = new StringWriter(output);
-        Console.SetOut(writer);
-
-        try
-        {
-            // Act
-            company.UpdateRazaoSocial(effectiveStartDate, segundaRazaoSocial);
-            
-            Console.Out.Flush();
-            Console.SetOut(originalConsoleOut);
-            writer.Close();
-            
-            var consoleOutput = output.ToString();
-
-            // Assert
-            // Na segunda alteração, o UpdatedAt não deve estar como "null"
-            Assert.DoesNotContain("[BEFORE] UpdatedAt atual: null", consoleOutput);
-            // Deve conter uma data válida
-            Assert.Matches(@"\[BEFORE\] UpdatedAt atual: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}", consoleOutput);
-        }
-        finally
-        {
-            Console.SetOut(originalConsoleOut);
-            writer.Dispose();
-        }
-    }
-
-    [Fact]
-    public void DeveExibirRegistroDeAuditoriaNoFormatoCorreto()
-    {
-        // Arrange
-        var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
-        
-        var novaRazaoSocial = RazaoSocial.Create("Empresa Nova LTDA");
-        
-        // Captura a saída do console
-        var output = new StringBuilder();
-        var originalConsoleOut = Console.Out;
-        var writer = new StringWriter(output);
-        Console.SetOut(writer);
-
-        try
-        {
-            // Act
-            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
-            
-            Console.Out.Flush();
-            Console.SetOut(originalConsoleOut);
-            writer.Close();
-            
-            var consoleOutput = output.ToString();
-
-            // Assert
-            // Verifica o formato do registro de auditoria: yyyy-MM-dd HH:mm:ss - Razão Social alterada para: ...
-            Assert.Matches(@"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} - Razão Social alterada para: Empresa Nova LTDA", consoleOutput);
-        }
-        finally
-        {
-            Console.SetOut(originalConsoleOut);
-            writer.Dispose();
-        }
-    }
-
-    [Fact]
-    public void DeveExibirTodosOsLogsNaOrdemCorreta()
-    {
-        // Arrange
-        var razaoSocialInicial = RazaoSocial.Create("Empresa Inicial LTDA");
-        var cnpj = Cnpj.Create(CnpjValido);
-        var company = new Company(effectiveStartDate, razaoSocialInicial, cnpj);
-        
-        var novaRazaoSocial = RazaoSocial.Create("Empresa Alterada LTDA");
-        
-        // Captura a saída do console
-        var output = new StringBuilder();
-        var originalConsoleOut = Console.Out;
-        var writer = new StringWriter(output);
-        Console.SetOut(writer);
-
-        try
-        {
-            // Act
-            company.UpdateRazaoSocial(effectiveStartDate, novaRazaoSocial);
-            
-            Console.Out.Flush();
-            Console.SetOut(originalConsoleOut);
-            writer.Close();
-            
-            var consoleOutput = output.ToString();
-            var lines = consoleOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-            // Assert - Verifica a ordem dos logs
-            var beforeIndex = Array.FindIndex(lines, l => l.Contains("[BEFORE]"));
-            var afterIndex = Array.FindIndex(lines, l => l.Contains("[AFTER]"));
-            var separatorIndex = Array.FindIndex(lines, l => l.Contains(new string('-', 60)));
-            
-            Assert.True(beforeIndex >= 0, "Deve conter logs [BEFORE]");
-            Assert.True(afterIndex >= 0, "Deve conter logs [AFTER]");
-            Assert.True(separatorIndex >= 0, "Deve conter separador");
-            Assert.True(beforeIndex < afterIndex, "Logs [BEFORE] devem vir antes de [AFTER]");
-            Assert.True(afterIndex < separatorIndex, "Logs [AFTER] devem vir antes do separador");
-        }
-        finally
-        {
-            Console.SetOut(originalConsoleOut);
-            writer.Dispose();
-        }
+        Assert.Equal(razaoSocial, company2?.RazaoSocial);
+        Assert.Equal(cnpj, company2?.Cnpj);
+        Assert.True(company2?.IsActive);
     }
 
     #endregion

@@ -10,12 +10,6 @@ namespace ramos_kyoto_hr.Tests.Base;
 public class EntityTesteConcreta : Entity
 {
     public string Nome { get; private set; }
-    public int Contador { get; private set; }
-    
-    public bool OnBeforeUpdateChamado { get; private set; }
-    public bool OnAfterUpdateChamado { get; private set; }
-    public DateTime? UpdatedAtAntes { get; private set; }
-    public DateTime? UpdatedAtDepois { get; private set; }
     public string? NomeAntes { get; private set; }
     public string? NomeDepois { get; private set; }
 
@@ -24,16 +18,13 @@ public class EntityTesteConcreta : Entity
     {
         EffectiveStartDate = effectiveStartDate;
         Nome = nome ?? throw new ArgumentNullException(nameof(nome));
-        Contador = 0;
     }
     
-    // Construtor com parâmetros (para reconstituir de banco de dados, por exemplo)
-    public EntityTesteConcreta(Guid id, DateOnly effectiveStartDate, bool isActive, DateTime createdAt, DateTime updatedAt, string nome, int contador)
-        : base(id, effectiveStartDate, isActive, createdAt, updatedAt)
+    public EntityTesteConcreta(Guid id, DateOnly effectiveStartDate, bool isActive, DateTime createdAt, string nome)
+        : base(id, effectiveStartDate, isActive, createdAt)
     {
         EffectiveStartDate = effectiveStartDate;
         Nome = nome ?? throw new ArgumentNullException(nameof(nome));
-        Contador = contador;
         SetId();
     }
 
@@ -42,49 +33,17 @@ public class EntityTesteConcreta : Entity
         if (string.IsNullOrWhiteSpace(novoNome))
             throw new ArgumentException("Nome não pode ser vazio", nameof(novoNome));
 
-        Update(() =>
-        {
-            EffectiveStartDate = effectiveStartDate;
-            Nome = novoNome;
-        });
+        EffectiveStartDate = effectiveStartDate;
+        Nome = novoNome;
     }
     
     private void SetId()
     {
-        Update(() =>
-        {
-            Id = GuidGenerator.GuidOrganizationalStructure("ZHG1WKMC000126", EffectiveStartDate);
-        });
-    }
-
-    public void IncrementarContador()
-    {
-        Update(() =>
-        {
-            Contador++;
-        });
-    }
-
-    protected override void OnBeforeUpdate()
-    {
-        OnBeforeUpdateChamado = true;
-        UpdatedAtAntes = UpdatedAt;
-        NomeAntes = Nome;
-    }
-
-    protected override void OnAfterUpdate()
-    {
-        OnAfterUpdateChamado = true;
-        UpdatedAtDepois = UpdatedAt;
-        NomeDepois = Nome;
+        Id = GuidGenerator.GuidOrganizationalStructure("ZHG1WKMC000126", EffectiveStartDate);
     }
 
     public void ResetarFlags()
     {
-        OnBeforeUpdateChamado = false;
-        OnAfterUpdateChamado = false;
-        UpdatedAtAntes = null;
-        UpdatedAtDepois = null;
         NomeAntes = null;
         NomeDepois = null;
     }
@@ -132,16 +91,6 @@ public class EntityTests
     }
 
     [Fact]
-    public void DeveCriarEntityComUpdatedAtNulo()
-    {
-        // Act
-        var entity = new EntityTesteConcreta(effectiveStartDate,"Teste");
-
-        // Assert
-        Assert.Null(entity.UpdatedAt);
-    }
-
-    [Fact]
     public void DeveCriarEntitiesComIdsUnicos()
     {
         // Act
@@ -149,7 +98,7 @@ public class EntityTests
         var entity2 = new EntityTesteConcreta(effectiveStartDate,"Teste 2");
 
         // Assert
-        Assert.Equal(entity1.Id, entity2.Id);
+        Assert.NotEqual(entity1.Id, entity2.Id);
         //TODO: revisar esse teste
     }
 
@@ -166,11 +115,10 @@ public class EntityTests
         var updatedAt = DateTime.UtcNow.AddDays(-5);
 
         // Act
-        var entity = new EntityTesteConcreta(idEspecifico, effectiveStartDate, true, createdAt, updatedAt, "Teste", 5);
+        var entity = new EntityTesteConcreta(idEspecifico, effectiveStartDate, true, createdAt, "Teste");
 
         // Assert
-        Assert.NotEqual(idEspecifico, entity.Id);
-        //TODO: revisar esse teste
+        Assert.Equal(idEspecifico, entity.Id);
     }
 
     [Fact]
@@ -182,10 +130,10 @@ public class EntityTests
         var updatedAt = DateTime.UtcNow.AddDays(-5);
 
         // Act - Mesmo passando false, deve ser true (conforme implementação)
-        var entity = new EntityTesteConcreta(id, effectiveStartDate, false, createdAt, updatedAt, "Teste", 5);
+        var entity = new EntityTesteConcreta(id, effectiveStartDate, false, createdAt, "Teste");
 
         // Assert
-        Assert.True(entity.IsActive); // Sempre true conforme linha 21 da Entity
+        Assert.True(entity.IsActive); 
     }
 
     [Fact]
@@ -197,7 +145,7 @@ public class EntityTests
         var updatedAt = DateTime.UtcNow;
 
         // Act
-        var entity = new EntityTesteConcreta(id, effectiveStartDate, true, createdAtEspecifico, updatedAt, "Teste", 5);
+        var entity = new EntityTesteConcreta(id, effectiveStartDate, true, createdAtEspecifico, "Teste");
 
         // Assert
         Assert.Equal(createdAtEspecifico, entity.CreatedAt);
@@ -209,14 +157,12 @@ public class EntityTests
         // Arrange
         var id = Guid.NewGuid();
         var createdAt = DateTime.UtcNow.AddDays(-10);
-        var updatedAtEspecifico = new DateTime(2024, 1, 20, 15, 45, 0, DateTimeKind.Utc);
 
         // Act
-        var entity = new EntityTesteConcreta(id, effectiveStartDate, true, createdAt, updatedAtEspecifico, "Teste", 5);
+        var entity = new EntityTesteConcreta(id, effectiveStartDate, true, createdAt, "Teste");
 
         // Assert
-        Assert.NotEqual(updatedAtEspecifico, entity.UpdatedAt);
-        //TODO: revisar esse teste
+        Assert.Equal(effectiveStartDate, entity.EffectiveStartDate);
     }
 
     [Fact]
@@ -227,20 +173,16 @@ public class EntityTests
         var createdAt = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
         var updatedAt = new DateTime(2024, 1, 10, 15, 30, 0, DateTimeKind.Utc);
         var nome = "Entidade Reconstituída";
-        var contador = 42;
 
         // Act
-        var entity = new EntityTesteConcreta(id, effectiveStartDate, true, createdAt, updatedAt, nome, contador);
+        var entity = new EntityTesteConcreta(id, effectiveStartDate, true, createdAt, nome);
 
         // Assert
-        //Assert.Equal(id, entity.Id);
-        //TODO: revisar esse teste
+        Assert.Equal(id, entity.Id);
         Assert.True(entity.IsActive);
         Assert.Equal(createdAt, entity.CreatedAt);
-        //Assert.Equal(updatedAt, entity.UpdatedAt);
-        //TODO: revisar esse teste
+        Assert.Equal(effectiveStartDate, entity.EffectiveStartDate);
         Assert.Equal(nome, entity.Nome);
-        Assert.Equal(contador, entity.Contador);
     }
 
     #endregion
@@ -261,24 +203,6 @@ public class EntityTests
     }
 
     [Fact]
-    public void DeveAtualizarUpdatedAtAoAtualizar()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Teste");
-        Assert.Null(entity.UpdatedAt);
-        
-        var antes = DateTime.UtcNow;
-
-        // Act
-        entity.AlterarNome(effectiveStartDate, "Novo Nome");
-        var depois = DateTime.UtcNow;
-
-        // Assert
-        Assert.NotNull(entity.UpdatedAt);
-        Assert.True(entity.UpdatedAt >= antes && entity.UpdatedAt <= depois);
-    }
-
-    [Fact]
     public void DeveLancarExcecaoQuandoActionForNula()
     {
         // Arrange
@@ -295,220 +219,9 @@ public class EntityTests
         Assert.IsType<ArgumentNullException>(exception.InnerException);
     }
 
-    [Fact]
-    public void DeveAtualizarUpdatedAtEmMultiplasAlteracoes()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Teste");
-
-        // Act
-        entity.AlterarNome(effectiveStartDate, "Nome 1");
-        var primeiraAtualizacao = entity.UpdatedAt;
-        
-        Thread.Sleep(10); // Pequeno delay
-        
-        entity.AlterarNome(effectiveStartDate, "Nome 2");
-        var segundaAtualizacao = entity.UpdatedAt;
-
-        // Assert
-        Assert.NotNull(primeiraAtualizacao);
-        Assert.NotNull(segundaAtualizacao);
-        Assert.True(segundaAtualizacao > primeiraAtualizacao);
-    }
-
     #endregion
 
-    #region Testes dos Hooks OnBeforeUpdate e OnAfterUpdate
-
-    [Fact]
-    public void DeveChamarOnBeforeUpdateAntesDeExecutarAction()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Nome Inicial");
-
-        // Act
-        entity.AlterarNome(effectiveStartDate,"Nome Alterado");
-
-        // Assert
-        Assert.True(entity.OnBeforeUpdateChamado);
-    }
-
-    [Fact]
-    public void DeveChamarOnAfterUpdateAposExecutarAction()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Teste");
-
-        // Act
-        entity.AlterarNome(effectiveStartDate, "Novo Nome");
-
-        // Assert
-        Assert.True(entity.OnAfterUpdateChamado);
-    }
-
-    [Fact]
-    public void OnBeforeUpdateDeveSerChamadoComUpdatedAtAindaNulo()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Teste");
-        Assert.Null(entity.UpdatedAt);
-
-        // Act
-        entity.AlterarNome(effectiveStartDate, "Novo Nome");
-
-        // Assert
-        Assert.Null(entity.UpdatedAtAntes); // UpdatedAt ainda era null no OnBeforeUpdate
-    }
-
-    [Fact]
-    public void OnAfterUpdateDeveSerChamadoComUpdatedAtPreenchido()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Teste");
-
-        // Act
-        entity.AlterarNome(effectiveStartDate,"Novo Nome");
-
-        // Assert
-        Assert.NotNull(entity.UpdatedAtDepois); // UpdatedAt já foi preenchido no OnAfterUpdate
-    }
-
-    [Fact]
-    public void OnBeforeUpdateDeveCapturarValorAntesDaAlteracao()
-    {
-        // Arrange
-        var nomeInicial = "Nome Inicial";
-        var entity = new EntityTesteConcreta(effectiveStartDate, nomeInicial);
-
-        // Act
-        entity.AlterarNome(effectiveStartDate, "Nome Novo");
-
-        // Assert
-        Assert.Equal(nomeInicial, entity.NomeAntes); // Capturado no OnBeforeUpdate antes da alteração
-        Assert.Equal("Nome Novo", entity.Nome); // Valor atual após alteração
-    }
-
-    [Fact]
-    public void OnAfterUpdateDeveCapturarValorDepoisDaAlteracao()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Nome Inicial");
-        var nomeNovo = "Nome Alterado";
-
-        // Act
-        entity.AlterarNome(effectiveStartDate, nomeNovo);
-
-        // Assert
-        Assert.Equal(nomeNovo, entity.NomeDepois); // Capturado no OnAfterUpdate após alteração
-        Assert.Equal(nomeNovo, entity.Nome); // Valor atual
-    }
-
-    [Fact]
-    public void OnBeforeUpdateDeveSerChamadoAntesDeAlterarPropriedades()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Nome Inicial");
-
-        // Act
-        entity.AlterarNome(effectiveStartDate, "Nome Alterado");
-
-        // Assert - Verifica que o hook foi chamado antes da alteração
-        // O NomeAntes captura o estado no OnBeforeUpdate (deve ser o valor inicial)
-        Assert.True(entity.OnBeforeUpdateChamado);
-        Assert.Equal("Nome Inicial", entity.NomeAntes);
-        Assert.Equal("Nome Alterado", entity.NomeDepois);
-    }
-
-    [Fact]
-    public void OnBeforeUpdateDeveSerChamadoComUpdatedAtAnteriorNaSegundaAtualizacao()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Nome Inicial");
-        
-        // Primeira atualização
-        entity.AlterarNome(effectiveStartDate, "Nome 1");
-        var primeiroUpdatedAt = entity.UpdatedAt;
-        
-        // Reset e aguarda
-        entity.ResetarFlags();
-        Thread.Sleep(10);
-
-        // Act - Segunda atualização
-        entity.AlterarNome(effectiveStartDate, "Nome 2");
-
-        // Assert - OnBeforeUpdate deve capturar o UpdatedAt da primeira atualização
-        Assert.Equal(primeiroUpdatedAt, entity.UpdatedAtAntes);
-    }
-
-    [Fact]
-    public void DeveChamarAmbosOsHooksEmCadaAtualizacao()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Teste");
-
-        // Act
-        entity.AlterarNome(effectiveStartDate, "Nome 1");
-
-        // Assert
-        Assert.True(entity.OnBeforeUpdateChamado);
-        Assert.True(entity.OnAfterUpdateChamado);
-    }
-
-    [Fact]
-    public void DeveChamarHooksEmMultiplasAtualizacoes()
-    {
-        // Arrange
-        var entity = new EntityTesteConcreta(effectiveStartDate, "Teste");
-
-        // Act & Assert - Primeira atualização
-        entity.AlterarNome(effectiveStartDate, "Nome 1");
-        Assert.True(entity.OnBeforeUpdateChamado);
-        Assert.True(entity.OnAfterUpdateChamado);
-
-        // Reset para segunda atualização
-        entity.ResetarFlags();
-        Assert.False(entity.OnBeforeUpdateChamado);
-        Assert.False(entity.OnAfterUpdateChamado);
-
-        // Act & Assert - Segunda atualização
-        entity.AlterarNome(effectiveStartDate,"Nome 2");
-        Assert.True(entity.OnBeforeUpdateChamado);
-        Assert.True(entity.OnAfterUpdateChamado);
-    }
-
-    [Fact]
-    public void HooksVaziosNaoDevemCausarErros()
-    {
-        // Arrange - Usa entidade que não sobrescreve os hooks
-        var entity = new EntitySemHooks(effectiveStartDate, "Teste");
-
-        // Act - Não deve lançar exceção
-        entity.AlterarNome(effectiveStartDate, "Novo Nome");
-
-        // Assert
-        Assert.Equal("Novo Nome", entity.Nome);
-        Assert.NotNull(entity.UpdatedAt);
-    }
-
-    [Fact]
-    public void DeveChamarOnBeforeUpdateAntesDeChamarOnAfterUpdate()
-    {
-        // Arrange
-        var ordemChamadas = new List<string>();
-        var entity = new EntityComOrdemDeLog(effectiveStartDate, "Teste", ordemChamadas);
-
-        // Act
-        entity.AlterarNome("Novo Nome");
-
-        // Assert
-        Assert.Equal(3, ordemChamadas.Count);
-        Assert.Equal("OnBeforeUpdate", ordemChamadas[0]);
-        Assert.Equal("Action", ordemChamadas[1]);
-        Assert.Equal("OnAfterUpdate", ordemChamadas[2]);
-    }
-
-    #endregion
-
+    
     #region Testes de Igualdade
 
     [Fact]
@@ -621,22 +334,12 @@ public class EntityTesteComLog : Entity
 
     public void AlterarNome(DateOnly effectiveStartDate, string novoNome)
     {
-        Update(() =>
-        {
-            EffectiveStartDate = effectiveStartDate;
-            Nome = novoNome;
-        });
+        EffectiveStartDate = effectiveStartDate;
+        Nome = novoNome;
     }
 
-    protected override void OnBeforeUpdate()
-    {
-        _onBeforeCallback?.Invoke();
-    }
 }
 
-/// <summary>
-/// Entidade que não sobrescreve os hooks (testa comportamento padrão)
-/// </summary>
 public class EntitySemHooks : Entity
 {
     public string Nome { get; private set; }
@@ -649,20 +352,12 @@ public class EntitySemHooks : Entity
 
     public void AlterarNome(DateOnly effectiveStartDate, string novoNome)
     {
-        Update(() =>
-        {
-            EffectiveStartDate = effectiveStartDate;
-            Nome = novoNome;
-        });
+        EffectiveStartDate = effectiveStartDate;
+        Nome = novoNome;
     }
-    
-    // Não sobrescreve OnBeforeUpdate e OnAfterUpdate
-    // Usa implementação padrão (vazia) da classe base
+
 }
 
-/// <summary>
-/// Entidade que registra ordem de chamadas dos hooks
-/// </summary>
 public class EntityComOrdemDeLog : Entity
 {
     public string Nome { get; private set; }
@@ -677,23 +372,9 @@ public class EntityComOrdemDeLog : Entity
 
     public void AlterarNome(string novoNome)
     {
-        Update(() =>
-        {
-            _ordemChamadas.Add("Action");
-            Nome = novoNome;
-        });
+        _ordemChamadas.Add("Action");
+        Nome = novoNome;
     }
 
-    protected override void OnBeforeUpdate()
-    {
-        _ordemChamadas.Add("OnBeforeUpdate");
-    }
 
-    protected override void OnAfterUpdate()
-    {
-        _ordemChamadas.Add("OnAfterUpdate");
-    }
 }
-
-
-

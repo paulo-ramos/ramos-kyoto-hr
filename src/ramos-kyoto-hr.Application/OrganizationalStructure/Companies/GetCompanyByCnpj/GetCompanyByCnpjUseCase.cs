@@ -33,8 +33,7 @@ public class GetCompanyByCnpjUseCase : IGetCompanyByCnpjUseCase
             company.Cnpj,
             company.RazaoSocial,
             company.IsActive,
-            company.CreatedAt,
-            company.UpdatedAt
+            company.CreatedAt
         );
     }
 }

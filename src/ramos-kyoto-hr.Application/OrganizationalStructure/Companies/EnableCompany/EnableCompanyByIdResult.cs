@@ -6,5 +6,5 @@ public record EnableCompanyByIdResult(
     string RazaoSocial, 
     string CnpjFormatado,
     bool IsActive,
-    DateTime CreatedAt, 
-    DateTime? UpdatedAt);
+    DateTime CreatedAt
+);
