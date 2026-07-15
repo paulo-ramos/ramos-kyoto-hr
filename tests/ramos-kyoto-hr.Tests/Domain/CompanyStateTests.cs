@@ -94,10 +94,10 @@ public class CompanyStateTests
         var hasChanged = company.Disable(_effectiveDate.AddDays(1));
 
         // Assert
-        hasChanged.Should().Be(true, "porque o estado mudou de ativo para inativo");
-        company.IsActive.Should().BeFalse("porque a empresa foi desativada");
-        company.IsStatusDeactive().Should().BeTrue();
-        company.EffectiveStartDate.Should().BeAfter(effectiveAtBefore, "porque houve mudança de estado");
+        //hasChanged.Should().Be(true, "porque o estado mudou de ativo para inativo");
+        hasChanged.IsActive.Should().BeFalse("porque a empresa foi desativada");
+        hasChanged.IsStatusDeactive().Should().BeTrue();
+        hasChanged.EffectiveStartDate.Should().BeAfter(effectiveAtBefore, "porque houve mudança de estado");
     }
 
     [Fact]
